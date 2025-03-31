@@ -1,0 +1,27 @@
+﻿@model PhamTaManhLan_8888.Models.Product
+
+<div class="card shadow-sm p-4">
+    <div class="row">
+        <!-- Hiển thị hình ảnh sản phẩm -->
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="col-md-4 text-center">
+                <img src="@Model.ImageUrl" alt="Product Image"
+                     class="img-fluid rounded border border-2 border-dark shadow-sm"
+                     style="max-width: 100%;">
+            </div>
+        }
+
+        <!-- Hiển thị thông tin sản phẩm -->
+        <div class="col-md-8">
+            <h2 class="text-primary">@Model.Name</h2>
+            <h4 class="text-danger">Giá: @Model.Price.ToString("C")</h4>
+            <p class="text-muted">@Model.Description</p>
+
+            <!-- Nút quay lại danh sách -->
+            <a asp-action="Index" class="btn btn-secondary mt-3">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+﻿@model PhamTaManhLan_8888.Models.Category
+
+<h2>Xóa Danh Mục</h2>
+<form asp-area="Admin" asp-controller="Category" asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" name="Id" value="@Model.Id" />
+    <p>Bạn có chắc muốn xóa danh mục: <strong>@Model.Name</strong>?</p>
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a href="@Url.Action("Index", "Category", new { area = "Admin" })" class="btn btn-secondary">Hủy</a>
+</form>
+

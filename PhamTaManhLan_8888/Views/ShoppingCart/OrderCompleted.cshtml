@@ -1,0 +1,14 @@
+﻿@model int
+
+<div class="card shadow-sm p-4 text-center">
+    <h2 class="text-success">🎉 Order Completed! 🎉</h2>
+    <p class="fs-5">Your order with ID <strong>#@Model</strong> has been placed successfully.</p>
+    <p class="text-muted">Thank you for shopping with us! You will receive a confirmation email shortly.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">Back to Home</a>
+</div>
+
+<script>
+    setTimeout(function() {
+        window.location.href = '/';
+    }, 5000); // Tự động chuyển về trang chủ sau 5 giây
+</script>

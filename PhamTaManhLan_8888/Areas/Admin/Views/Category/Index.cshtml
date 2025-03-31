@@ -1,0 +1,32 @@
+﻿@model IEnumerable<PhamTaManhLan_8888.Models.Category>
+
+<h2>Danh Sách Danh Mục</h2>
+
+<!-- Nút thêm danh mục -->
+<a href="@Url.Action("Create", "Category", new { area = "Admin" })" class="btn btn-primary">Thêm danh mục</a>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên danh mục</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.Id</td>
+                <td>@category.Name</td>
+                <td>
+                    <!-- Nút Edit -->
+                    <a href="@Url.Action("Edit", "Category", new { area = "Admin", id = category.Id })" class="btn btn-warning">Edit</a>
+                    <!-- Nút Delete -->
+                    <a href="@Url.Action("Delete", "Category", new { area = "Admin", id = category.Id })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

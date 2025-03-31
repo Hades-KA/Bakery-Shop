@@ -1,0 +1,64 @@
+﻿@model PhamTaManhLan_8888.Models.Product
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Add Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2 class="text-center text-primary fw-bold">Thêm sản phẩm mới</h2>
+
+<div class="card shadow-sm p-4">
+    <form asp-area="Admin" asp-controller="Product" asp-action="Add" method="post" enctype="multipart/form-data">
+        <!-- Tên sản phẩm -->
+        <div class="form-group mb-3">
+            <label asp-for="Name" class="form-label fw-bold"><i class="fas fa-tag"></i> Tên sản phẩm</label>
+            <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <!-- Giá sản phẩm -->
+        <div class="form-group mb-3">
+            <label asp-for="Price" class="form-label fw-bold"><i class="fas fa-dollar-sign"></i> Giá</label>
+            <input asp-for="Price" class="form-control" placeholder="Nhập giá sản phẩm" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <!-- Mô tả sản phẩm -->
+        <div class="form-group mb-3">
+            <label asp-for="Description" class="form-label fw-bold"><i class="fas fa-info-circle"></i> Mô tả</label>
+            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <!-- Chọn danh mục -->
+        <div class="form-group mb-3">
+            <label asp-for="CategoryId" class="form-label fw-bold"><i class="fas fa-list"></i> Danh mục</label>
+            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                <option value="">-- Chọn danh mục --</option>
+            </select>
+        </div>
+
+        <!-- Ảnh sản phẩm -->
+        <div class="form-group mb-3">
+            <label asp-for="ImageUrl" class="form-label fw-bold"><i class="fas fa-image"></i> Ảnh sản phẩm</label>
+            <input type="file" asp-for="ImageUrl" class="form-control" id="imageUpload" onchange="previewImage(event)" />
+
+            <!-- Khung hiển thị ảnh preview -->
+            <div class="text-center mt-3">
+                <img id="imagePreview" class="img-thumbnail shadow-sm d-none" style="max-width: 200px; border-radius: 8px;">
+            </div>
+        </div>
+
+        <!-- Nút thêm -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success px-4">
+                <i class="fas fa-plus-circle"></i> Thêm sản phẩm
+            </button>
+            <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary px-4">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+    </form>
+</div>

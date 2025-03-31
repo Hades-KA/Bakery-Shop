@@ -1,0 +1,63 @@
+﻿@using PhamTaManhLan_8888.Extensions
+@model Order
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var cart = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+}
+
+<h2 class="mb-4">Checkout</h2>
+
+<div class="card p-4 shadow-sm">
+    <h4 class="mb-3">Order Summary</h4>
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Product</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-end">Price</th>
+                <th class="text-end">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in cart.Items)
+            {
+                <tr>
+                    <td>
+                        <img src="@(item.Url ?? "/images/default.jpg")" alt="Product Image" class="img-thumbnail" style="width: 150px; height: 180px; object-fit: cover;">
+                        @item.Name
+                    </td>
+                    <td class="text-center">@item.Quantity</td>
+                    <td class="text-end">@item.Price.ToString("N0") VND</td>
+                    <td class="text-end">@((item.Price * item.Quantity).ToString("N0")) VND</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-secondary">
+                <td colspan="3" class="text-end fw-bold">Total Price:</td>
+                <td class="text-end fw-bold">@cart.Items.Sum(i => i.Price * i.Quantity).ToString("N0") VND</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <form asp-action="Checkout" method="post">
+        <div class="form-group mb-3">
+            <label asp-for="ShippingAddress" class="form-label fw-bold">Shipping Address</label>
+            <input asp-for="ShippingAddress" class="form-control" placeholder="Enter your address" required />
+            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Notes" class="form-label fw-bold">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes (optional)"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2">Place Order</button>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

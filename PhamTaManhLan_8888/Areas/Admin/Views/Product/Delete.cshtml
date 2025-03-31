@@ -1,0 +1,39 @@
+﻿@model PhamTaManhLan_8888.Models.Product
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-danger fw-bold">Xác nhận xóa sản phẩm</h2>
+
+<div class="card shadow-sm border-danger">
+    <div class="card-body">
+        <h4 class="card-title text-danger">Bạn có chắc chắn muốn xóa sản phẩm này?</h4>
+
+        <!-- Hiển thị thông tin chi tiết sản phẩm -->
+        <div class="product-info mb-3">
+            <p><strong>Tên sản phẩm:</strong> <span class="text-primary">@Model.Name</span></p>
+            <p><strong>Giá:</strong> <span class="text-success">@Model.Price.ToString("C")</span></p>
+            <p><strong>Mô tả:</strong> <span class="text-muted">@Model.Description</span></p>
+
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                    <div class="text-center my-3">
+                        <img src="@Model.ImageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail shadow-sm" style="max-width: 200px; border-radius: 8px;">
+                    </div>
+            }
+        </div>
+
+        <!-- Nút xác nhận -->
+        <form asp-action="DeleteConfirmed" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex justify-content-center gap-2">
+                <button type="submit" class="btn btn-danger px-4">
+                    <i class="fas fa-trash-alt"></i> Xóa
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                    <i class="fas fa-times"></i> Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

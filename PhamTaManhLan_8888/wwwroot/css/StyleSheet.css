@@ -1,0 +1,162 @@
+﻿/* Nút "Add Product" */
+.custom-add-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+    .custom-add-btn:hover {
+        background-color: #218838;
+    }
+
+/* Định dạng bảng */
+.table-responsive {
+    overflow-x: auto; /* Cho phép cuộn ngang nếu cần */
+    width: 100%;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .table-custom th,
+    .table-custom td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table-custom th {
+        background-color: #1976d2;
+        color: white;
+        text-align: center;
+    }
+
+/* Sắp xếp thông tin sản phẩm */
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Nút hành động */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.custom-view-btn,
+.custom-edit-btn,
+.custom-delete-btn {
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.custom-view-btn {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.custom-edit-btn {
+    background-color: #ffc107;
+    color: black;
+}
+
+.custom-delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.custom-view-btn:hover {
+    background-color: #138496;
+}
+
+.custom-edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.custom-delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .table-custom th,
+    .table-custom td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .product-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .custom-view-btn,
+    .custom-edit-btn,
+    .custom-delete-btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .table-custom thead {
+        display: none;
+    }
+
+    .table-custom tbody,
+    .table-custom tr,
+    .table-custom td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-custom tr {
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .table-custom td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+        .table-custom td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 10px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+    .action-buttons {
+        justify-content: flex-end;
+    }
+}
