@@ -36,7 +36,31 @@
                                     <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">Index</a>
                                 </li>
                             }
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Danh mục
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                                    @if (ViewBag.Categories != null)
+                                    {
+                                        @foreach (var category in ViewBag.Categories)
+                                        {
+                                            <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-searchTerm="@category.Text">@category.Text</a></li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" href="#">Không có danh mục</a></li>
+                                    }
+                                </ul>
+                            </li>
                         </ul>
+
+                        <form class="d-flex" asp-controller="Product" asp-action="Index" method="get">
+                            <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="searchTerm">
+                            <button class="btn btn-outline-light" type="submit">Tìm</button>
+                        </form>
+
                         <partial name="_LoginPartial" />
                         <a asp-controller="ShoppingCart" asp-action="Index" class="btn btn-primary position-relative">
                             <i class="bi-cart-fill me-1"></i>
