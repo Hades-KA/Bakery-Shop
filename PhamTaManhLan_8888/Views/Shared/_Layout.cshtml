@@ -14,92 +14,80 @@
 
     @if (!Context.Request.Path.Value.Contains("404") && !Context.Request.Path.Value.Contains("/Home/Error"))
     {
-        <header>
-            <nav class="navbar navbar-expand-sm navbar-dark custom-navbar mb-3">
-                <div class="container-fluid">
-                    <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">PhamTaManhLan_8888</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                            </li>
+                        <header>
+                            <nav class="navbar navbar-expand-sm navbar-dark custom-navbar mb-3">
+                                <div class="container-fluid">
+                                        <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">PhamTaManhLan_8888</a>
+                                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" 
+                                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                        <span class="navbar-toggler-icon"></span>
+                                    </button>
+                                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                                        <ul class="navbar-nav flex-grow-1">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                            </li>
                             @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">Index</a>
-                                </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">Index</a>
+                                                            </li>
                             }
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Danh mục
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
-                                    @if (ViewBag.Categories != null)
-                                    {
-                                        @foreach (var category in ViewBag.Categories)
-                                        {
-                                            <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-searchTerm="@category.Text">@category.Text</a></li>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <li><a class="dropdown-item" href="#">Không có danh mục</a></li>
-                                    }
-                                </ul>
+                            @if (User.IsInRole("Customer"))
+                            {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Order" asp-action="MyOrderItems">My Ordered Products</a>
                             </li>
-                        </ul>
-
-                        <form class="d-flex" asp-controller="Product" asp-action="Index" method="get">
-                            <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="searchTerm">
-                            <button class="btn btn-outline-light" type="submit">Tìm</button>
-                        </form>
-
-                        <partial name="_LoginPartial" />
-                        <a asp-controller="ShoppingCart" asp-action="Index" class="btn btn-primary position-relative">
-                            <i class="bi-cart-fill me-1"></i>
-                            Cart
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count-badge">
+                            }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                                <li class="nav-item">
+                                                    <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">Manage Categories</a>
+                                                </li>
+                            }
+                                        </ul>
+                                        <partial name="_LoginPartial"/>
+                                        <a asp-controller="ShoppingCart" asp-action="Index" class="btn btn-primary position-relative">
+                                            <i class="bi-cart-fill me-1"></i>
+                                            Cart
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count-badge">
                                 @(ViewBag.CartCount ?? 0)
-                            </span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </header>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </nav>
+                        </header>
     }
 
-    <div class="container">
-        <main role="main" class="pb-3">
+<div class="container">
+    <main role="main" class="pb-3">
             @RenderBody()
-        </main>
-    </div>
+    </main>
+</div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - PhamTaManhLan_8888 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        function updateCartCount() {
-            $.get("/ShoppingCart/GetCartCount", function (data) {
-                $("#cart-count-badge").text(data.cartCount);
-            });
-        }
-        $(document).ready(function () {
-            updateCartCount();
+<footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2025 - PhamTaManhLan_8888 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script>
+    function updateCartCount() {
+        $.get("/ShoppingCart/GetCartCount", function (data) {
+            $("#cart-count-badge").text(data.cartCount);
         });
-    </script>
+    }
+    $(document).ready(function () {
+        updateCartCount();
+    });
+</script>
     @await RenderSectionAsync("Scripts", required: false)
-    <link rel="stylesheet" href="~/css/StyleSheet.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/StyleSheet.css" asp-append-version="true" />
 </body>
 </html>
