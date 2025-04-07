@@ -1,0 +1,39 @@
+﻿@model IEnumerable<PhamTaManhLan_8888.Models.OrderDetail>
+
+<h2 class="mb-4">Ordered Products</h2>
+
+@if (!Model.Any())
+{
+        <div class="alert alert-info">You have not ordered any products yet.</div>
+}
+else
+{
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Product</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-center">Order Date</th>
+                    <th class="text-center">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                        <tr>
+                            <td>
+                                <img src="@item.ProductImageUrl" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                        @item.Product.Name
+                            </td>
+                            <td class="text-center">@item.Quantity</td>
+                            <td class="text-end">@item.Price.ToString("N0") VND</td>
+                            <td class="text-end">@((item.Price * item.Quantity).ToString("N0")) VND</td>
+                            <td class="text-center">@item.Order.OrderDate.ToString("yyyy-MM-dd")</td>
+                            <td class="text-center">@item.Order.Notes</td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}

@@ -232,5 +232,6 @@ namespace PhamTaManhLan_8888.Controllers
 
             ViewBag.Categories = new SelectList(distinctCategories, "Id", "Name", selectedCategoryId); // Gửi danh mục vào view
         }
+  
     }
 }

@@ -12,7 +12,7 @@ namespace PhamTaManhLan_8888.Models
 		public string Name { get; set; }
 
 		[Required(ErrorMessage = "Giá sản phẩm không được để trống")]
-		[Range(0.01, 10000.00, ErrorMessage = "Giá sản phẩm phải nằm trong khoảng 0.01 - 10,000.00")]
+		[Range(1000, 500000, ErrorMessage = "Giá sản phẩm phải nằm trong khoảng 0.01 - 10,000.00")]
 		public decimal Price { get; set; }
 
 		[StringLength(500, ErrorMessage = "Mô tả không được dài quá 500 ký tự")]
