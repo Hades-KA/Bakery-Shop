@@ -87,5 +87,170 @@
 </script>
     @await RenderSectionAsync("Scripts", required: false)
 <link rel="stylesheet" href="~/css/StyleSheet.css" asp-append-version="true" />
+
+<!-- Chatbot Icon and Dialog -->
+<div class="chat-icon" onclick="toggleChat()"> </div>
+<div class="chat-box" id="chatBox">
+<div class="chat-header">Gemini Chatbot</div>
+<div class="chat-messages" id="chatMessages"></div>
+<div class="chat-input">
+<input type="text" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.key === 'Enter') sendMessage();">
+<button onclick="sendMessage()">Gửi</button>
+</div>
+</div>
+
+<!--Css cho chat bot-->
+<style >
+/* CSS cho chatbot */
+.chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #28a745;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+.chat-icon:hover {
+    background-color: #218838;
+}
+
+.chat-box {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 360px;
+    height: 450px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.chat-header {
+    background-color: #28a745;
+    color: white;
+    padding: 12px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+}
+
+.message {
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background-color: #28a745;
+    color: white;
+    margin-left: auto;
+}
+
+.bot-message {
+    background-color: #e9ecef;
+    color: #333;
+    margin-right: auto;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+    .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+        margin-right: 10px;
+    }
+
+    .chat-input button {
+        padding: 8px 16px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .chat-input button:hover {
+            background-color: #218838;
+        }
+    </style>
+
+<script>
+function toggleChat() {
+const chatBox = document.getElementById('chatBox');
+chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
+}
+function addMessage(content, isUser) {
+const messages = document.getElementById('chatMessages');
+const messageDiv = document.createElement('div');
+messageDiv.className = 'message ' + (isUser ? 'user-message' : 'bot- message');
+messageDiv.textContent = content;
+messages.appendChild(messageDiv);
+messages.scrollTop = messages.scrollHeight;
+}
+async function sendMessage() {
+const input = document.getElementById('chatInput');
+const message = input.value.trim();
+if (!message) {
+addMessage("Vui lòng nhập tin nhắn!", false);
+return;
+}
+addMessage(message, true);
+input.value = '';
+try {
+const response = await fetch('/Gemini/Chat', {
+method: 'POST', headers: {
+'Content-Type': 'application/json',
+'Accept': 'application/json'
+
+},body: JSON.stringify({ message: message })
+});
+if (!response.ok) {
+const errorText = await response.text();
+throw new Error(`Lỗi server: ${response.status} - ${errorText}`);
+}
+const data = await response.json();
+if (data.success) {
+addMessage(data.response, false);
+} else {
+addMessage('Lỗi: ' + data.error, false);
+}
+} catch (error) {
+addMessage('Lỗi: ' + error.message, false);
+}
+}
+</script>
 </body>
 </html>

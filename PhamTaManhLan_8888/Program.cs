@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PhamTaManhLan_8888.Models;
 using PhamTaManhLan_8888.Repositories;
+using PhamTaManhLan_8888.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 // Add services to the container.
-
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IGeminiService, GeminiService>();
 builder.Services.ConfigureApplicationCookie(options => {
 	options.LoginPath = $"/Identity/Account/Login";
 	options.LogoutPath = $"/Identity/Account/Logout";
