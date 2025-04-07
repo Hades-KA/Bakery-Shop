@@ -5,38 +5,60 @@ using System.IO;
 using System.Threading.Tasks;
 using PhamTaManhLan_8888.Models;
 using PhamTaManhLan_8888.Repositories;
+using System.Linq;
 
 namespace PhamTaManhLan_8888.Areas.Admin.Controllers
 {
 	[Area("Admin")] // Xác định controller này thuộc khu vực Admin
-	[Authorize(Roles = "Admin")] // Chỉ Admin mới có quyền truy cập vào controller này
+	[Authorize(Roles = "Admin,Employee")] // Cho phép cả Admin và Employee truy cập
 	public class ProductController : Controller
 	{
 		private readonly IProductRepository _productRepository; // Repository quản lý sản phẩm
 		private readonly ICategoryRepository _categoryRepository; // Repository quản lý danh mục sản phẩm
+		private readonly IWebHostEnvironment _webHostEnvironment;
 
-		public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
+		public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment)
 		{
 			_productRepository = productRepository;
 			_categoryRepository = categoryRepository;
+			_webHostEnvironment = webHostEnvironment;
 		}
 
 		private IActionResult CheckAdminAccess()
 		{
-			// Kiểm tra nếu người dùng không có quyền Admin thì chuyển hướng về trang Access Denied
-			if (!User.IsInRole("Admin"))
+			// Kiểm tra nếu người dùng không có quyền Admin hoặc Employee thì chuyển hướng
+			if (!User.IsInRole("Admin") && !User.IsInRole("Employee"))
 			{
 				return RedirectToAction("AccessDenied", "Account", new { area = "Identity" });
 			}
 			return null;
 		}
 
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(string category, string searchTerm)
 		{
 			var accessCheck = CheckAdminAccess();
 			if (accessCheck != null) return accessCheck;
 
 			var products = await _productRepository.GetAllAsync(); // Lấy danh sách tất cả sản phẩm
+
+			// Lọc theo danh mục
+			if (!string.IsNullOrEmpty(category) && category != "Tất cả")
+			{
+				products = products.Where(p => p.Category?.Name == category).ToList();
+			}
+
+			// Lọc theo từ khóa tìm kiếm (nếu có)
+			if (!string.IsNullOrEmpty(searchTerm))
+			{
+				var lowerSearchTerm = searchTerm.ToLower().Trim();
+				products = products.Where(p => p.Name.ToLower().Contains(lowerSearchTerm) ||
+											 (p.Category != null && p.Category.Name.ToLower().Contains(lowerSearchTerm))).ToList();
+			}
+
+			ViewBag.Categories = new SelectList(await _categoryRepository.GetAllAsync(), "Id", "Name");
+			ViewBag.CurrentCategory = category; // Truyền danh mục hiện tại về View
+			ViewBag.SearchTerm = searchTerm;     // Truyền từ khóa tìm kiếm về View
+
 			return View(products);
 		}
 
@@ -122,12 +144,14 @@ namespace PhamTaManhLan_8888.Areas.Admin.Controllers
 
 		private async Task<string> SaveImage(IFormFile image)
 		{
-			var savePath = Path.Combine("wwwroot/images", image.FileName);
-			using (var fileStream = new FileStream(savePath, FileMode.Create))
+			var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+			var uniqueFileName = $"{Guid.NewGuid()}_{image.FileName}";
+			var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+			using (var fileStream = new FileStream(filePath, FileMode.Create))
 			{
-				await image.CopyToAsync(fileStream); // Lưu file ảnh vào thư mục
+				await image.CopyToAsync(fileStream);
 			}
-			return "/images/" + image.FileName; // Trả về đường dẫn ảnh để lưu vào database
+			return "/images/" + uniqueFileName;
 		}
 
 		public async Task<IActionResult> Delete(int id)

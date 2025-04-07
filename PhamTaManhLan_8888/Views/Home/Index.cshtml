@@ -1,8 +1,14 @@
-﻿@model IEnumerable<PhamTaManhLan_8888.Models.Product>
+@model IEnumerable<PhamTaManhLan_8888.Models.Product>
 @{
     ViewData["Title"] = "Home Page";
     int numOfQuantity = 1;
 }
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-warning text-center">@ViewBag.ErrorMessage</div>
+}
+
 <section class="py-2">
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
@@ -43,6 +49,8 @@
 
             $.post("/ShoppingCart/AddToCart", { productId: productId, quantity: quantity }, function (data) {
                 updateCartCount();
+            }).fail(function () {
+                window.location.href = "/Identity/Account/Login";
             });
         });
 

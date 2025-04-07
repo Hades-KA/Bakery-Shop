@@ -23,11 +23,9 @@
             <tr>
                 <td>@item.Name</td>
                 <td class="text-center">
-                    <form asp-action="UpdateCart" method="post" class="d-inline">
-                        <input type="hidden" name="productId" value="@item.ProductId" />
-                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control d-inline w-50 text-center" />
-                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                    </form>
+                    <input type="number" class="form-control d-inline w-50 text-center quantity-input"
+                           data-product-id="@item.ProductId" value="@item.Quantity" min="1"
+                           data-original-quantity="@item.Quantity" />
                 </td>
                 <td class="text-end">@item.Price.ToString("N0") VND</td>
                 <td class="text-end">@((item.Price * item.Quantity).ToString("N0")) VND</td>
@@ -57,5 +55,60 @@
             Only customers can place orders.
         </div>
     }
-
+    @* <h4 class="mt-3 text-end">Total: <span id="cart-total">@Model.Items.Sum(i => i.Price * i.Quantity).ToString("N0") VND</span></h4> *@
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện thay đổi trên các input field số lượng
+            $('.quantity-input').on('change', function () {
+                var productId = $(this).data('product-id'); // Lấy ID sản phẩm từ thuộc tính data
+                var quantity = $(this).val(); // Lấy số lượng mới
+                var row = $(this).closest('tr'); // Lấy dòng chứa sản phẩm
+
+                // Gửi AJAX request để cập nhật giỏ hàng
+                $.ajax({
+                    url: '/ShoppingCart/UpdateCartItemAjax', // Đường dẫn đến action method
+                    type: 'POST',
+                    data: { productId: productId, quantity: quantity },
+                    success: function (data) {
+                        if (data.success) {
+                            // Cập nhật tổng tiền của mục hàng trong dòng tương ứng
+                            row.find('.text-end:nth-child(4)').text(formatNumber(data.itemTotal) + ' VND');
+
+                            // Cập nhật tổng tiền của toàn bộ giỏ hàng (nếu có phần tử này trên trang)
+                            if ($('#cart-total').length) {
+                                $('#cart-total').text(formatNumber(data.cartTotal) + ' VND');
+                            }
+
+                            // Cập nhật số lượng trên badge giỏ hàng ở header
+                            $('#cart-count-badge').text(data.cartCount);
+                        } else if (data.error) {
+                            alert(data.error);
+                            // Nếu có lỗi, khôi phục lại giá trị số lượng ban đầu
+                            $(this).val($(this).data('original-quantity'));
+                        }
+                        // Cập nhật thuộc tính data-original-quantity với giá trị hiện tại
+                        $(this).data('original-quantity', quantity);
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi cập nhật giỏ hàng.');
+                        // Nếu có lỗi, khôi phục lại giá trị số lượng ban đầu
+                        $(this).val($(this).data('original-quantity'));
+                    }
+                });
+            });
+
+            // Lưu trữ giá trị ban đầu của quantity khi trang được tải
+            $('.quantity-input').each(function() {
+                $(this).data('original-quantity', $(this).val());
+            });
+
+            // Hàm định dạng số để hiển thị dấu phẩy ngăn cách hàng nghìn
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+        });
+    </script>
+}
