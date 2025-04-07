@@ -3,10 +3,10 @@
 
 @{
     // Kiểm tra nếu người dùng KHÔNG phải Admin
-    if (!User.IsInRole("Admin"))
+    if (!(User.IsInRole("Admin") || User.IsInRole("Employee")))
     {
                 <div class="alert alert-danger mt-4">
-                    <strong>⛔ Bạn không có quyền truy cập vào trang này.</strong>
+                    <strong>⛔ Bạn không có quyền truy cập vào trang này!!!</strong>
                 </div>
         return; // Dừng hiển thị nội dung bên dưới
     }
