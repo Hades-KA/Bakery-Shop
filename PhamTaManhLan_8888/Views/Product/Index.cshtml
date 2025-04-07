@@ -1,4 +1,18 @@
-﻿<div class="d-flex justify-content-between align-items-center mb-3">
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+
+@{
+    // Kiểm tra nếu người dùng KHÔNG phải Admin
+    if (!User.IsInRole("Admin"))
+    {
+                <div class="alert alert-danger mt-4">
+                    <strong>⛔ Bạn không có quyền truy cập vào trang này.</strong>
+                </div>
+        return; // Dừng hiển thị nội dung bên dưới
+    }
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="product-title">Danh sách sản phẩm</h2>
     <a href="@Url.Action("Add", "Product")" class="btn btn-success">
         <i class="fas fa-plus"></i> Thêm sản phẩm
@@ -16,7 +30,6 @@
 </form>
 
 <!-- Bảng sản phẩm -->
-
 <table class="table table-striped table-hover table-bordered shadow-sm">
     <thead class="table-dark">
         <tr>
@@ -52,11 +65,6 @@
                         <a href="@Url.Action("Update", "Product", new { id = product.Id })" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Sửa
                         </a>
-
-                        <!-- Remove the delete button for admin -->
-                        <!-- <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Xóa
-                        </a> -->
                     </td>
                 </tr>
         }
