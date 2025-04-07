@@ -65,6 +65,15 @@
                         <a href="@Url.Action("Update", "Product", new { id = product.Id })" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Sửa
                         </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                                <a href="@Url.Action("Delete", "Product", new { id = product.Id })"
+                                   onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này không?')"
+                                   class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </a>
+                    }
                     </td>
                 </tr>
         }
