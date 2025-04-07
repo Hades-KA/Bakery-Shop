@@ -62,8 +62,8 @@ namespace PhamTaManhLan_8888.Controllers
 		}
 
 
-		// Action method để hiển thị form thêm sản phẩm
-		[Authorize(Roles = "Admin")] // Chỉ cho phép admin truy cập
+        // Action method để hiển thị form thêm sản phẩm
+        [Authorize(Roles = "Admin,Employee")]// Chỉ cho phép admin truy cập
         public async Task<IActionResult> Add()
         {
             await LoadCategoriesAsync(); // Load danh mục để hiển thị trong dropdown list
@@ -72,7 +72,7 @@ namespace PhamTaManhLan_8888.Controllers
 
         // Action method để xử lý việc thêm sản phẩm
         [HttpPost]
-        [Authorize(Roles = "Admin")] // Chỉ cho phép admin truy cập
+        [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> Add(Product product, IFormFile imageUrl)
         {
             ModelState.Remove("ImageUrl"); // Xóa ràng buộc validation của ImageUrl để tránh lỗi validation
