@@ -8,17 +8,30 @@
     <div class="row">
         @if (!string.IsNullOrEmpty(Model.ImageUrl))
         {
-                    <div class="col-md-4 text-center">
-                        <img src="@Model.ImageUrl" alt="@Model.Name"
-                             class="img-fluid rounded border border-2 border-dark shadow-sm"
-                             style="max-width: 100%;">
-                    </div>
+                <div class="col-md-4 text-center">
+                    <img src="@Model.ImageUrl" alt="@Model.Name"
+                         class="img-fluid rounded border border-2 border-dark shadow-sm"
+                         style="max-width: 100%;">
+                </div>
         }
 
         <div class="col-md-8">
             <h2 class="text-primary">@Model.Name</h2>
             <h4 class="text-danger">Giá: @Model.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</h4>
             <p class="text-muted">@Model.Description</p>
+
+            <!-- Danh mục sản phẩm -->
+            <p class="text-muted">
+                <strong>Danh mục: </strong>
+                @if (Model.Category != null)
+                {
+                        <span class="text-success">@Model.Category.Name</span>
+                }
+                else
+                {
+                        <span class="text-danger">Chưa có danh mục</span>
+                }
+            </p>
 
             <!-- Nút quay lại -->
             <a href="@(string.IsNullOrEmpty(returnUrl) ? Url.Action("Index", "Home") : returnUrl)"

@@ -107,6 +107,26 @@ namespace PhamTaManhLan_8888.Services
             {
                 return await GetProductList();
             }
+            // Câu hỏi về bánh sinh nhật
+            else if (input.Contains("bánh sinh nhật"))
+            {
+                return await GetBirthdayCake();
+            }
+            // Câu hỏi về bánh kem
+            else if (input.Contains("bánh kem"))
+            {
+                return await GetCake();
+            }
+            // Câu hỏi về bánh quy
+            else if (input.Contains("bánh quy"))
+            {
+                return await GetCookie();
+            }
+            // Câu hỏi về bánh mì
+            else if (input.Contains("bánh mì"))
+            {
+                return await GetBread();
+            }
             return "Không có dữ liệu liên quan trong database.";
         }
 
@@ -146,5 +166,52 @@ namespace PhamTaManhLan_8888.Services
             }
             return "Không có sản phẩm nào trong cơ sở dữ liệu.";
         }
+        // Lấy bánh sinh nhật:
+        private async Task<string> GetBirthdayCake()
+        {
+            var birthdayCake = await _dbContext.Products
+                .FirstOrDefaultAsync(p => p.Name.Contains("sinh nhật"));
+            if (birthdayCake != null)
+            {
+                return $"Bánh sinh nhật của tiệm là {birthdayCake.Name} với giá {birthdayCake.Price:N0} VND.";
+            }
+            return "Không có bánh sinh nhật nào.";
+        }
+        //Lấy bánh kem:
+        private async Task<string> GetCake()
+        {
+            var cake = await _dbContext.Products
+                .FirstOrDefaultAsync(p => p.Name.Contains("kem"));
+            if (cake != null)
+            {
+                return $"Bánh kem của tiệm là {cake.Name} với giá {cake.Price:N0} VND.";
+            }
+            return "Không có bánh kem nào.";
+        }
+        //Lấy bánh quy:
+        private async Task<string> GetCookie()
+        {
+            var cookie = await _dbContext.Products
+                .FirstOrDefaultAsync(p => p.Name.Contains("quy"));
+            if (cookie != null)
+            {
+                return $"Bánh quy của tiệm là {cookie.Name} với giá {cookie.Price:N0} VND.";
+            }
+            return "Không có bánh quy nào.";
+        }
+
+        //Lấy bánh quy:
+        private async Task<string> GetBread()
+        {
+            var bread = await _dbContext.Products
+                .FirstOrDefaultAsync(p => p.Name.Contains("mì"));
+            if (bread != null)
+            {
+                return $"Bánh mì của tiệm là {bread.Name} với giá {bread.Price:N0} VND.";
+            }
+            return "Không có bánh mì nào.";
+        }
+
     }
+
 }
