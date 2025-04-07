@@ -18,6 +18,7 @@ namespace PhamTaManhLan_8888.Controllers
 
 		public async Task<IActionResult> Index()
 		{
+			ViewBag.IsLoggedIn = User.Identity.IsAuthenticated;
 			ViewBag.Categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(await _categoryRepository.GetAllAsync(), "Id", "Name"); // Lấy danh mục sản phẩm
 			var products = await _productRepository.GetAllAsync();
 			return View(products);
