@@ -39,41 +39,42 @@ public class ShoppingCartController : Controller
 		return View(cart);
 	}
 
-	// Action method xử lý việc thêm sản phẩm vào giỏ hàng
-	public async Task<IActionResult> AddToCart(int productId, int quantity)
-	{
-		// Lấy thông tin sản phẩm từ repository dựa trên ID
-		var product = await _productRepository.GetByIdAsync(productId);
-		if (product == null) return NotFound(); // Trả về NotFound nếu không tìm thấy sản phẩm
 
-		// Lấy giỏ hàng từ Session hoặc tạo mới nếu chưa có
-		var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+    // Action method xử lý việc thêm sản phẩm vào giỏ hàng
+    [Authorize]
+    public async Task<IActionResult> AddToCart(int productId, int quantity) // khi người dùng không có tài khoản Customer thì Click vào add to cart sẽ chuyển qua trang login
+    {
+        // Lấy thông tin sản phẩm từ repository dựa trên ID
+        var product = await _productRepository.GetByIdAsync(productId);
+        if (product == null) return NotFound(); // Trả về NotFound nếu không tìm thấy sản phẩm
 
-		// Thêm sản phẩm vào giỏ hàng
-		cart.AddItem(new CartItem
-		{
-			ProductId = productId,
-			Name = product.Name,
-			Price = product.Price,
-			Quantity = quantity,
-			Url = product.Images != null && product.Images.Any()
-					 ? product.Images.First().Url // Lấy URL của ảnh đầu tiên nếu có
-					   : product.ImageUrl // Sử dụng ImageUrl nếu không có ảnh trong Images
-		});
+        // Lấy giỏ hàng từ Session hoặc tạo mới nếu chưa có
+        var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
 
-		// Lưu giỏ hàng đã cập nhật vào Session
-		HttpContext.Session.SetObjectAsJson("Cart", cart);
+        // Thêm sản phẩm vào giỏ hàng
+        cart.AddItem(new CartItem
+        {
+            ProductId = productId,
+            Name = product.Name,
+            Price = product.Price,
+            Quantity = quantity,
+            Url = product.Images != null && product.Images.Any()
+                     ? product.Images.First().Url // Lấy URL của ảnh đầu tiên nếu có
+                       : product.ImageUrl // Sử dụng ImageUrl nếu không có ảnh trong Images
+        });
 
-		// Gửi thông báo thành công qua TempData
-		TempData["Message"] = "Product added to cart successfully!";
+        // Lưu giỏ hàng đã cập nhật vào Session
+        HttpContext.Session.SetObjectAsJson("Cart", cart);
 
-		// Chuyển hướng về trang chủ
-		return RedirectToAction("Index", "Home");
-	}
+        // Gửi thông báo thành công qua TempData
+        TempData["Message"] = "Product added to cart successfully!";
 
+        // Chuyển hướng về trang chủ
+        return RedirectToAction("Index", "Home");
+    }
 
-	// Action method xử lý việc xóa sản phẩm khỏi giỏ hàng
-	public IActionResult RemoveFromCart(int productId)
+    // Action method xử lý việc xóa sản phẩm khỏi giỏ hàng
+    public IActionResult RemoveFromCart(int productId)
 	{
 		// Lấy giỏ hàng từ Session
 		var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
