@@ -11,8 +11,10 @@
 </head>
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand ps-3" asp-area="Admin" asp-controller="Home" asp-action="Index">Admin Panel</a>
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        <a class="navbar-brand ps-3" asp-area="Admin" asp-controller="Home" asp-action="Index">Admin Panel</a>
+        <a class="btn btn-outline-light ms-3" asp-area="" asp-controller="Home" asp-action="Index" href="/Home">🏠 Home</a>
+
         <ul class="navbar-nav ms-auto me-3">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -29,13 +31,13 @@
                     <div class="nav">
                         @if (User.IsInRole("Admin"))
                         {
-            <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </a>
-            <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">
+                <!--<a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>-->
+            <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index" href="/Admin/Category">
                 <i class="fas fa-list"></i> Danh Mục
             </a>
-            <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">
+            <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index" href="/Admin/Product">
                 <i class="fas fa-box"></i> Sản Phẩm
             </a>
                         }
