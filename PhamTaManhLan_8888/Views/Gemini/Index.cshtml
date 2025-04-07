@@ -1,0 +1,10 @@
+﻿<h1>Chat với Gemini AI</h1>
+<form method="get" asp-action="Index">
+    <input type="text" name="userInput" placeholder="Nhập câu hỏi của bạn"
+    />
+    <button type="submit">Gửi</button>
+</form>
+@if (ViewBag.AIResponse != null)
+{
+    <p><strong>AI answer: </strong> @ViewBag.AIResponse</p>
+}

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PhamTaManhLan_8888.Models.Product>
+@model IEnumerable<PhamTaManhLan_8888.Models.Product>
 @{
     ViewData["Title"] = "Home Page";
     int numOfQuantity = 1;
@@ -14,21 +14,27 @@
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             @foreach (var item in Model)
             {
-                <div class="col mb-5">
-                    <div class="card gap-3" style="width: 18rem">
-                        <img src="@item.ImageUrl" class="card-img-top" alt="..." style="height: 300px">
-                        <div class="card-body">
-                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
-                            <div class="d-flex">
-                                <span>Price: </span>
-                                <p class="mx-3">@item.Price.ToString("#,##0") Vnđ</p>
-                            </div>
-                            <button class="btn btn-outline-dark add-to-cart" data-product-id="@item.Id" data-quantity="@numOfQuantity">
-                                <i class="bi-cart-fill me-1"></i> Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                                    <div class="col mb-5">
+                                        <div class="card gap-3" style="width: 18rem">
+                                            <img src="@item.ImageUrl" class="card-img-top" alt="..." style="height: 300px">
+                                            <div class="card-body">
+                                                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                                                <div class="d-flex">
+                                                    <span>Price: </span>
+                                                    <p class="mx-3">@item.Price.ToString("#,##0") Vnđ</p>
+                                                </div>
+                                                <div class="d-flex gap-2">
+        <a asp-controller="Product" asp-action="Display" asp-route-id="@item.Id" asp-route-returnUrl="@Context.Request.Path" class="btn btn-primary">
+            <i class="bi bi-eye"></i> Xem Chi Tiết
+        </a>
+
+                                                    <button class="btn btn-outline-dark add-to-cart" data-product-id="@item.Id" data-quantity="@numOfQuantity">
+                                                        <i class="bi-cart-fill me-1"></i> Add to Cart
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
             }
         </div>
     </div>
@@ -43,6 +49,8 @@
 
             $.post("/ShoppingCart/AddToCart", { productId: productId, quantity: quantity }, function (data) {
                 updateCartCount();
+            }).fail(function () {
+                window.location.href = "/Identity/Account/Login";
             });
         });
 

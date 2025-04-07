@@ -1,4 +1,17 @@
-﻿@model IEnumerable<PhamTaManhLan_8888.Models.Product>
+@model IEnumerable<PhamTaManhLan_8888.Models.Product>
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+
+@{
+    // Kiểm tra nếu người dùng KHÔNG phải Admin
+    if (!(User.IsInRole("Admin") || User.IsInRole("Employee")))
+    {
+                <div class="alert alert-danger mt-4">
+                    <strong>⛔ Bạn không có quyền truy cập vào trang này!!!</strong>
+                </div>
+        return; // Dừng hiển thị nội dung bên dưới
+    }
+}
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="product-title">Danh sách sản phẩm</h2>
@@ -14,6 +27,7 @@
     </div>
 }
 
+<!-- Bảng sản phẩm -->
 <table class="table table-striped table-hover table-bordered shadow-sm">
     <thead class="table-dark">
         <tr>
@@ -28,28 +42,38 @@
     <tbody>
         @foreach (var product in Model)
         {
-            <tr>
-                <td class="align-middle fw-bold">@product.Name</td>
-                <td class="align-middle text-success fw-bold">@product.Price.ToString("C")</td>
-                <td class="align-middle text-muted">@product.Description</td>
-                <td class="align-middle text-center">
-                    <img src="@(product.ImageUrl ?? "/images/default.jpg")" alt="@product.Name" class="img-thumbnail product-image" />
-                </td>
-                <td class="align-middle @(product.Category != null ? "text-success" : "text-danger")">
-                    @(product.Category != null ? product.Category.Name : "Chưa có danh mục")
-                </td>
-                <td class="align-middle text-center">
-                    <a href="@Url.Action("Display", "Product", new { id = product.Id })" class="btn btn-info btn-sm">
-                        <i class="fas fa-eye"></i> Xem
-                    </a>
-                    <a href="@Url.Action("Update", "Product", new { id = product.Id })" class="btn btn-warning btn-sm">
-                        <i class="fas fa-edit"></i> Sửa
-                    </a>
-                    <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash"></i> Xóa
-                    </a>
-                </td>
-            </tr>
+                <tr>
+                    <td class="align-middle fw-bold">@product.Name</td>
+                    <td class="align-middle text-success fw-bold">
+                    @product.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+                    </td>
+
+                    <td class="align-middle text-muted">@product.Description</td>
+                    <td class="align-middle text-center">
+                        <img src="@product.ImageUrl" alt="@product.Name" class="img-thumbnail product-image" />
+                    </td>
+                    <td class="align-middle @(product.Category != null ? "text-success" : "text-danger")">
+                    @(product.Category?.Name ?? "Chưa có danh mục")
+                    </td>
+                    <td class="align-middle text-center">
+                        <a href="@Url.Action("Display", "Product", new { id = product.Id, returnUrl = Context.Request.Path })" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i> Xem
+                        </a>
+
+                        <a href="@Url.Action("Update", "Product", new { id = product.Id })" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Sửa
+                        </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                                <a href="@Url.Action("Delete", "Product", new { id = product.Id })"
+                                   onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này không?')"
+                                   class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </a>
+                    }
+                    </td>
+                </tr>
         }
     </tbody>
 </table>
