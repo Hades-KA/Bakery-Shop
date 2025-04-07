@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhamTaManhLan_8888.Models;
@@ -8,77 +9,121 @@ using System.Threading.Tasks;
 
 namespace PhamTaManhLan_8888.Areas.Admin.Controllers
 {
-	[Area("Admin")] // Xác định khu vực Admin
-	[Authorize(Roles = "Admin,Employee")] // Chỉ Admin & Employee mới truy cập
-	public class OrderController : Controller
-	{
-		private readonly ApplicationDbContext _context;
+    [Area("Admin")] // Define Admin area
+    [Authorize(Roles = "Admin,Employee")] // Only Admin & Employee have access
+    public class OrderController : Controller
+    {
+        private readonly ApplicationDbContext _context;
 
-		public OrderController(ApplicationDbContext context)
-		{
-			_context = context;
-		}
+        public OrderController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-		// 🟢 Hiển thị danh sách đơn hàng
-		public async Task<IActionResult> Index()
-		{
-			var orders = await _context.Orders
-									   .Include(o => o.ApplicationUser)
-									   .ToListAsync();
-			return View(orders);
-		}
+        // 🟢 Admin: Display list of orders
+        public async Task<IActionResult> Index()
+        {
+            var orders = await _context.Orders
+                                       .Include(o => o.ApplicationUser)
+                                       .ToListAsync();
+            return View(orders);
+        }
 
-		// 🟢 Hiển thị chi tiết đơn hàng
-		public async Task<IActionResult> Details(int id)
-		{
-			var order = await _context.Orders
-				.Include(o => o.ApplicationUser)
-				.Include(o => o.OrderDetails)
-				.ThenInclude(od => od.Product)
-				.FirstOrDefaultAsync(o => o.Id == id);
+        // 🟢 Admin: Display order details
+        public async Task<IActionResult> Details(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.ApplicationUser)
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
-			if (order == null) return NotFound();
-			return View(order);
-		}
+            if (order == null) return NotFound();
+            return View(order);
+        }
 
-		// 🔴 Chỉ Admin mới có quyền xóa đơn hàng
-		[Authorize(Roles = "Admin")]
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Delete(int id)
-		{
-			var order = await _context.Orders.FindAsync(id);
-			if (order == null) return NotFound();
+        // 🔴 Only Admin can delete an order
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
 
-			_context.Orders.Remove(order);
-			await _context.SaveChangesAsync();
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
 
-			TempData["SuccessMessage"] = "Đơn hàng đã được xóa!";
-			return RedirectToAction(nameof(Index));
-		}
+            TempData["SuccessMessage"] = "Đơn hàng đã được xóa!";
+            return RedirectToAction(nameof(Index));
+        }
 
-		// 🟠 Cập nhật trạng thái đơn hàng (Employee & Admin đều có thể)
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdateStatus(int id, OrderStatus status)
-		{
-			Console.WriteLine($"🔍 Debug: Đã nhận ID={id}, Status={status}");
+        // 🟠 Update order status (Admin & Employee)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatus(int id, OrderStatus status)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                TempData["ErrorMessage"] = "Đơn hàng không tồn tại.";
+                return RedirectToAction("Index");
+            }
 
-			var order = await _context.Orders.FindAsync(id);
-			if (order == null)
-			{
-				Console.WriteLine("⚠️ Lỗi: Đơn hàng không tồn tại.");
-				TempData["ErrorMessage"] = "Đơn hàng không tồn tại.";
-				return RedirectToAction("Index");
-			}
+            // Update order status
+            order.Status = status;
+            await _context.SaveChangesAsync();
 
-			// 🟢 Cập nhật trạng thái đơn hàng
-			order.Status = status;
-			await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Cập nhật trạng thái thành công!";
+            return RedirectToAction("Details", new { id });
+        }
+    }
+}
 
-			Console.WriteLine("✅ Cập nhật trạng thái thành công!");
-			TempData["SuccessMessage"] = "Cập nhật trạng thái thành công!";
-			return RedirectToAction("Details", new { id });
-		}
-	}
+namespace PhamTaManhLan_8888.Controllers
+{
+    [Authorize(Roles = "Customer")] // Only Customers can access this
+    public class OrderController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
+
+        // 🟢 Display customer's orders
+        public async Task<IActionResult> MyOrderItems()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            var orderItems = await _context.OrderDetails
+                .Include(od => od.Product)
+                .Include(od => od.Order)
+                .Where(od => od.Order.UserId == user.Id)
+                .OrderByDescending(od => od.Order.OrderDate) // Sort by order date
+                .ToListAsync();
+
+            return View(orderItems);
+        }
+
+        // 🟠 Display order details for customers
+        public async Task<IActionResult> OrderDetails(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            var order = await _context.Orders
+                .Include(o => o.ApplicationUser)
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == user.Id);
+
+            if (order == null) return NotFound();
+            return View(order);
+        }
+    }
 }
