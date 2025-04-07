@@ -4,6 +4,7 @@ using PhamTaManhLan_8888.Models;
 using PhamTaManhLan_8888.Repositories;
 using PhamTaManhLan_8888.Models;
 using PhamTaManhLan_8888.Repositories;
+using PhamTaManhLan_8888.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -72,6 +73,11 @@ builder.Services.ConfigureApplicationCookie(options => {
     options.SlidingExpiration = true; // Kích hoạt gia hạn cookie
 });
 
+// ✅ Đăng ký HttpClient
+builder.Services.AddHttpClient();
+
+// ✅ Đăng ký GeminiService
+builder.Services.AddScoped<IGeminiService, GeminiService>();
 var app = builder.Build();
 
 // Cấu hình Middleware
