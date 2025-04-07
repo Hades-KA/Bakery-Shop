@@ -27,16 +27,30 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                        <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">
-                            <i class="fas fa-list"></i> Danh Mục
-                        </a>
-                        <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">
-                            <i class="fas fa-box"></i> Sản Phẩm
-                        </a>
-                    </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+            <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">
+                <i class="fas fa-list"></i> Danh Mục
+            </a>
+            <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">
+                <i class="fas fa-box"></i> Sản Phẩm
+            </a>
+                        }
+                        else if (User.IsInRole("Employee"))
+                        {
+            <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">
+                <i class="fas fa-box"></i> Sản Phẩm
+            </a>
+                        }
+                        else
+                        {
+            <!-- Khách hàng không thấy menu admin -->
+                        }
+</div>
+
                 </div>
             </nav>
         </div>
