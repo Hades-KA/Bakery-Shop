@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using PhamTaManhLan_8888.Models;
 using PhamTaManhLan_8888.Areas.Admin.Models;
+using System.Globalization;
 
 namespace PhamTaManhLan_8888.Services
 {
@@ -26,7 +27,7 @@ namespace PhamTaManhLan_8888.Services
             if (string.IsNullOrEmpty(_apiUrl) || !Uri.IsWellFormedUriString(_apiUrl, UriKind.Absolute))
             {
                 throw new InvalidOperationException("API URL không hợp lệ. Kiểm tra GeminiAI: ApiUrl trong appsettings.json.");
-}
+            }
             if (string.IsNullOrEmpty(_apiKey))
             {
                 throw new InvalidOperationException("API Key không hợp lệ. Kiểm tra GeminiAI: ApiKey trong appsettings.json.");
@@ -43,20 +44,17 @@ namespace PhamTaManhLan_8888.Services
                 var requestBody = new
                 {
                     contents = new[]
-                {
-
-new
-{
-parts = new[]
-{
-new { text = $"Dựa trên dữ liệu sau: {context}\nCâu hỏi:{input}" }
-}
-}
-}
+                    {
+                        new
+                        {
+                            parts = new[]
+                            {
+                                new { text = $"Dựa trên dữ liệu sau: {context}\nCâu hỏi:{input}" }
+                            }
+                        }
+                    }
                 };
-                var content = new
-
-                StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
 
                 var requestUrl = $"{_apiUrl}?key={_apiKey}";
                 Console.WriteLine($"Request URL: {requestUrl}");
@@ -64,19 +62,15 @@ new { text = $"Dựa trên dữ liệu sau: {context}\nCâu hỏi:{input}" }
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new HttpRequestException($"API call failed:{response.StatusCode} - { errorContent}");
-                
-}
+                    throw new HttpRequestException($"API call failed:{response.StatusCode} - {errorContent}");
+                }
                 var responseString = await response.Content.ReadAsStringAsync();
-                var result =
-
-                JsonSerializer.Deserialize<JsonElement>(responseString);
+                var result = JsonSerializer.Deserialize<JsonElement>(responseString);
                 return result.GetProperty("candidates")[0]
-                .GetProperty("content")
-                .GetProperty("parts")[0]
-                .GetProperty("text")
-                .GetString();
-
+                    .GetProperty("content")
+                    .GetProperty("parts")[0]
+                    .GetProperty("text")
+                    .GetString();
             }
             catch (Exception ex)
             {
@@ -124,12 +118,12 @@ new { text = $"Dựa trên dữ liệu sau: {context}\nCâu hỏi:{input}" }
                 .FirstOrDefaultAsync();
             if (cheapestProduct != null)
             {
-                return $"Sản phẩm rẻ nhất là {cheapestProduct.Name} với giá {cheapestProduct.Price:C} VND.";
+                return $"Sản phẩm rẻ nhất là {cheapestProduct.Name} với giá {cheapestProduct.Price:N0} VND.";
             }
             return "Không tìm thấy sản phẩm nào.";
         }
 
-        // Hàm nhỏ: Lấy danh sách sản phẩm mắc 
+        // Hàm nhỏ: Lấy sản phẩm đắt nhất
         private async Task<string> GetMostExpensiveProduct()
         {
             var mostExpensiveProduct = await _dbContext.Products
@@ -137,7 +131,7 @@ new { text = $"Dựa trên dữ liệu sau: {context}\nCâu hỏi:{input}" }
                 .FirstOrDefaultAsync();
             if (mostExpensiveProduct != null)
             {
-                return $"Sản phẩm đắt nhất là {mostExpensiveProduct.Name} với giá {mostExpensiveProduct.Price:C} VND.";
+                return $"Sản phẩm đắt nhất là {mostExpensiveProduct.Name} với giá {mostExpensiveProduct.Price:N0} VND.";
             }
             return "Không tìm thấy sản phẩm nào.";
         }
@@ -148,10 +142,9 @@ new { text = $"Dựa trên dữ liệu sau: {context}\nCâu hỏi:{input}" }
             var products = await _dbContext.Products.ToListAsync();
             if (products != null && products.Any())
             {
-                return $"Danh sách sản phẩm: {string.Join(", ", products.Select(p => $"{p.Name} - {p.Price:C} VND"))}";
+                return $"Danh sách sản phẩm: {string.Join(", ", products.Select(p => $"{p.Name} - {p.Price:N0} VND"))}";
             }
             return "Không có sản phẩm nào trong cơ sở dữ liệu.";
         }
-
     }
 }
