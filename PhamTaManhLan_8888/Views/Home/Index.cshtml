@@ -6,8 +6,14 @@
 
 @if (ViewBag.ErrorMessage != null)
 {
-    <div class="alert alert-warning text-center">@ViewBag.ErrorMessage</div>
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
 }
+
+@foreach (var product in Model)
+{
+    <!-- Hiển thị sản phẩm -->
+}
+
 
 <section class="py-2">
     <div class="container px-4 px-lg-5 mt-5">

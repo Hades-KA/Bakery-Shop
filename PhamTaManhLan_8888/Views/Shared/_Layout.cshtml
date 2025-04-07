@@ -27,23 +27,18 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
-                   
-                    
-
                             @if (User.IsInRole("Customer"))
                             {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="Order" asp-action="MyOrderItems">My Orders</a>
-                                    </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Order" asp-action="MyOrderItems">My Orders</a>
+                                </li>
                             }
-
                             @if (User.IsInRole("Admin"))
                             {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">Manage Categories</a>
-                                    </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">Manage Categories</a>
+                                </li>
                             }
-
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" data-bs-toggle="dropdown">
                                     Danh mục
@@ -53,19 +48,19 @@
                                     {
                                         foreach (var category in ViewBag.Categories)
                                         {
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                           asp-controller="@(User.IsInRole("Admin") || User.IsInRole("Employee") ? "Product" : "Home")"
-                                                           asp-action="Index"
-                                                           asp-route-category="@category.Text">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-controller="@(User.IsInRole("Admin") || User.IsInRole("Employee") ? "Product" : "Home")"
+                                                   asp-action="Index"
+                                                   asp-route-category="@category.Text">
                                                     @category.Text
-                                                        </a>
-                                                    </li>
+                                                </a>
+                                            </li>
                                         }
                                     }
                                     else
                                     {
-                                            <li><a class="dropdown-item">Không có danh mục</a></li>
+                                        <li><a class="dropdown-item">Không có danh mục</a></li>
                                     }
                                 </ul>
                             </li>
@@ -80,13 +75,13 @@
 
                         @if (User.IsInRole("Customer"))
                         {
-                                <a asp-controller="ShoppingCart" asp-action="Index" class="btn btn-primary position-relative ms-3">
-                                    <i class="bi-cart-fill me-1"></i>
-                                    Cart
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count-badge">
+                            <a asp-controller="ShoppingCart" asp-action="Index" class="btn btn-primary position-relative ms-3">
+                                <i class="bi-cart-fill me-1"></i>
+                                Cart
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count-badge">
                                     @(ViewBag.CartCount ?? 0)
-                                    </span>
-                                </a>
+                                </span>
+                            </a>
                         }
                     </div>
                 </div>
@@ -94,182 +89,182 @@
         </header>
     }
 
-<div class="container">
-    <main role="main" class="pb-3">
-            @RenderBody()
-    </main>
-</div>
-
-<footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2025 - Bakery Shop - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
     </div>
-</footer>
 
-<!-- Scripts -->
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-<script>
-    function updateCartCount() {
-        $.get("/ShoppingCart/GetCartCount", function (data) {
-            $("#cart-count-badge").text(data.cartCount);
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - Bakery Shop - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function updateCartCount() {
+            $.get("/ShoppingCart/GetCartCount", function (data) {
+                $("#cart-count-badge").text(data.cartCount);
+            });
+        }
+        $(document).ready(function () {
+            updateCartCount();
         });
-    }
-    $(document).ready(function () {
-        updateCartCount();
-    });
-</script>
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 
-<!-- Chatbot UI -->
-<div class="chat-icon" onclick="toggleChat()">💬</div>
-<div class="chat-box" id="chatBox">
-    <div class="chat-header">Gemini Chatbot</div>
-    <div class="chat-messages" id="chatMessages"></div>
-    <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.key === 'Enter') sendMessage();">
-        <button onclick="sendMessage()">Gửi</button>
+    <!-- Chatbot UI -->
+    <div class="chat-icon" onclick="toggleChat()">💬</div>
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">Gemini Chatbot</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.key === 'Enter') sendMessage();">
+            <button onclick="sendMessage()">Gửi</button>
+        </div>
     </div>
-</div>
 
-<!-- Chatbot CSS -->
-<style>
-    .chat-icon {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        background-color: #28a745;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-        z-index: 1000;
-    }
-
-    .chat-box {
-        position: fixed;
-        bottom: 90px;
-        right: 20px;
-        width: 360px;
-        height: 450px;
-        background-color: #fff;
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        display: none;
-        flex-direction: column;
-        z-index: 1000;
-    }
-
-    .chat-header {
-        background-color: #28a745;
-        color: white;
-        padding: 12px;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-        text-align: center;
-    }
-
-    .chat-messages {
-        flex: 1;
-        padding: 15px;
-        overflow-y: auto;
-        background-color: #f8f9fa;
-    }
-
-    .message {
-        margin: 8px 0;
-        padding: 10px;
-        border-radius: 8px;
-        max-width: 80%;
-        word-wrap: break-word;
-    }
-
-    .user-message {
-        background-color: #28a745;
-        color: white;
-        margin-left: auto;
-    }
-
-    .bot-message {
-        background-color: #e9ecef;
-        color: #333;
-        margin-right: auto;
-    }
-
-    .chat-input {
-        display: flex;
-        padding: 10px;
-        border-top: 1px solid #ddd;
-    }
-
-    .chat-input input {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-right: 10px;
-    }
-
-    .chat-input button {
-        padding: 8px 16px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-</style>
-
-<!-- Chatbot JS -->
-<script>
-    function toggleChat() {
-        const chatBox = document.getElementById('chatBox');
-        chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
-    }
-
-    function addMessage(content, isUser) {
-        const messages = document.getElementById('chatMessages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
-        messageDiv.textContent = content;
-        messages.appendChild(messageDiv);
-        messages.scrollTop = messages.scrollHeight;
-    }
-
-    async function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const message = input.value.trim();
-        if (!message) {
-            addMessage("Vui lòng nhập tin nhắn!", false);
-            return;
+    <!-- Chatbot CSS -->
+    <style>
+        .chat-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
         }
-        addMessage(message, true);
-        input.value = '';
 
-        try {
-            const response = await fetch('/Gemini/Chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ message })
-            });
+        .chat-box {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 360px;
+            height: 450px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
 
-            const data = await response.json();
-            if (data.success) {
-                addMessage(data.response, false);
-            } else {
-                addMessage('Lỗi: ' + data.error, false);
+        .chat-header {
+            background-color: #28a745;
+            color: white;
+            padding: 12px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            text-align: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+        }
+
+        .message {
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #28a745;
+            color: white;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background-color: #e9ecef;
+            color: #333;
+            margin-right: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+            .chat-input input {
+                flex: 1;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-right: 10px;
             }
-        } catch (error) {
-            addMessage('Lỗi: ' + error.message, false);
+
+            .chat-input button {
+                padding: 8px 16px;
+                background-color: #28a745;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    </style>
+
+    <!-- Chatbot JS -->
+    <script>
+        function toggleChat() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
         }
-    }
-</script>
+
+        function addMessage(content, isUser) {
+            const messages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
+            messageDiv.textContent = content;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) {
+                addMessage("Vui lòng nhập tin nhắn!", false);
+                return;
+            }
+            addMessage(message, true);
+            input.value = '';
+
+            try {
+                const response = await fetch('/Gemini/Chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    addMessage(data.response, false);
+                } else {
+                    addMessage('Lỗi: ' + data.error, false);
+                }
+            } catch (error) {
+                addMessage('Lỗi: ' + error.message, false);
+            }
+        }
+    </script>
 
 </body>
 </html>
