@@ -16,22 +16,22 @@
             </a>
         </li>
 
-        @if (roles.Contains("Admin")) // Nếu là Admin
+           <!-- @if (roles.Contains("Admin")) // Nếu là Admin
         {
-            <li class="nav-item">
-                <a id="admin-dashboard" class="nav-link text-dark"
-                   asp-area="Admin" asp-controller="Product" asp-action="Index">
-                    Admin Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a id="category-management" class="nav-link text-dark"
-                   asp-area="Admin" asp-controller="Category" asp-action="Index">
-                    Quản lý danh mục
-                </a>
-            </li>
+                    <li class="nav-item">
+                        <a id="admin-dashboard" class="nav-link text-dark"
+                           asp-area="Admin" asp-controller="Product" asp-action="Index">
+                            Admin Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="category-management" class="nav-link text-dark"
+                           asp-area="Admin" asp-controller="Category" asp-action="Index">
+                            Quản lý danh mục
+                        </a>
+                    </li>
         }
-
+    -->
         @if (roles.Contains("Employee")) // Nếu là Employee
         {
             <li class="nav-item">
