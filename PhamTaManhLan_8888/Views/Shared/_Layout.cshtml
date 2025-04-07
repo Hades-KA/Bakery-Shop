@@ -45,16 +45,7 @@
                                     {
                                         @foreach (var category in ViewBag.Categories)
                                         {
-                                            <li>
-                                                @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
-                                                {
-                                                    <a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-category="@category.Text">@category.Text</a>
-                                                }
-                                                else
-                                                {
-                                                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-category="@category.Text">@category.Text</a>
-                                                }
-                                            </li>
+                                            <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-searchTerm="@category.Text">@category.Text</a></li>
                                         }
                                     }
                                     else
@@ -65,7 +56,7 @@
                             </li>
                         </ul>
 
-                        <form class="d-flex" asp-controller="@(User.IsInRole("Admin") || User.IsInRole("Employee") ? "Product" : "Home")" asp-action="Index" method="get">
+                        <form class="d-flex" asp-controller="Product" asp-action="Index" method="get">
                             <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="searchTerm">
                             <button class="btn btn-outline-light" type="submit">Tìm</button>
                         </form>

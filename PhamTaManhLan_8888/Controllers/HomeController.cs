@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using PhamTaManhLan_8888.Models;
 using PhamTaManhLan_8888.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -26,34 +25,11 @@ namespace PhamTaManhLan_8888.Controllers
             _userManager = userManager;
         }
 
-		public async Task<IActionResult> Index(string category, string searchTerm)
+		public async Task<IActionResult> Index()
 		{
 			ViewBag.IsLoggedIn = User.Identity.IsAuthenticated;
-			ViewBag.Categories = new SelectList(await _categoryRepository.GetAllAsync(), "Name", "Name");
-			ViewBag.SearchTerm = searchTerm;
-			ViewBag.CurrentCategory = category;
-
+			ViewBag.Categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(await _categoryRepository.GetAllAsync(), "Id", "Name"); // Lấy danh mục sản phẩm
 			var products = await _productRepository.GetAllAsync();
-
-			if (!string.IsNullOrEmpty(category) && category != "all")
-			{
-				products = products.Where(p => p.Category?.Name == category).ToList();
-			}
-
-			if (!string.IsNullOrEmpty(searchTerm))
-			{
-				var lowerSearchTerm = searchTerm.ToLower().Trim();
-				products = products.Where(p => p.Name.ToLower().Contains(lowerSearchTerm) ||
-											   (p.Category != null && p.Category.Name.ToLower().Contains(lowerSearchTerm))).ToList();
-
-				if (!products.Any())
-				{
-					ViewBag.ErrorMessage = $"Không tìm thấy sản phẩm nào với từ khóa \"{searchTerm}\".";
-				}
-			}
-
-			products = products.Where(p => !string.IsNullOrEmpty(p.ImageUrl)).ToList();
-
 			return View(products);
 		}
 

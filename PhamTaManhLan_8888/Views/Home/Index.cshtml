@@ -2,7 +2,13 @@
 @{
     ViewData["Title"] = "Home Page";
     int numOfQuantity = 1;
+    bool isLoggedIn = ViewBag.IsLoggedIn ?? false;
 }
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-warning text-center">@ViewBag.ErrorMessage</div>
+}
+
 <section class="py-2">
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
@@ -37,7 +43,16 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
+        const isLoggedIn = @isLoggedIn.ToString().ToLower(); 
+
         $(".add-to-cart").click(function () {
+            if (!isLoggedIn) {
+                
+                window.location.href = "/Identity/Account/Login";
+                return;
+            }
+
+            
             var productId = $(this).data("product-id");
             var quantity = $(this).data("quantity");
 
