@@ -97,39 +97,61 @@ new { text = $"Dựa trên dữ liệu sau: {context}\nCâu hỏi:{input}" }
             {
                 return "Không thể truy cập cơ sở dữ liệu.";
             }
+
+            // Câu hỏi về sản phẩm rẻ nhất
             if (input.Contains("rẻ nhất"))
             {
                 return await GetCheapestProduct();
             }
+            // Câu hỏi về sản phẩm đắt nhất
+            else if (input.Contains("đắt nhất"))
+            {
+                return await GetMostExpensiveProduct();
+            }
+            // Câu hỏi về danh sách sản phẩm
             else if (input.Contains("sản phẩm"))
             {
                 return await GetProductList();
             }
             return "Không có dữ liệu liên quan trong database.";
         }
+
         // Hàm nhỏ: Lấy sản phẩm rẻ nhất
         private async Task<string> GetCheapestProduct()
         {
             var cheapestProduct = await _dbContext.Products
-            .OrderBy(p => p.Price)
-            .FirstOrDefaultAsync();
+                .OrderBy(p => p.Price)
+                .FirstOrDefaultAsync();
             if (cheapestProduct != null)
             {
-                return $"Sản phẩm rẻ nhất là {cheapestProduct.Name} với giá{ cheapestProduct.Price} VND.";}
+                return $"Sản phẩm rẻ nhất là {cheapestProduct.Name} với giá {cheapestProduct.Price:C} VND.";
+            }
             return "Không tìm thấy sản phẩm nào.";
-
         }
-        // Hàm nhỏ: Lấy danh sách sản phẩm
+
+        // Hàm nhỏ: Lấy danh sách sản phẩm mắc 
+        private async Task<string> GetMostExpensiveProduct()
+        {
+            var mostExpensiveProduct = await _dbContext.Products
+                .OrderByDescending(p => p.Price)
+                .FirstOrDefaultAsync();
+            if (mostExpensiveProduct != null)
+            {
+                return $"Sản phẩm đắt nhất là {mostExpensiveProduct.Name} với giá {mostExpensiveProduct.Price:C} VND.";
+            }
+            return "Không tìm thấy sản phẩm nào.";
+        }
+
+        // Lấy danh sách sản phẩm
         private async Task<string> GetProductList()
         {
             var products = await _dbContext.Products.ToListAsync();
             if (products != null && products.Any())
             {
-                return $"Danh sách sản phẩm: {string.Join(", ", products.Select(p =>
-
-                $"{p.Name} - {p.Price} VND"))}";
+                return $"Danh sách sản phẩm: {string.Join(", ", products.Select(p => $"{p.Name} - {p.Price:C} VND"))}";
             }
             return "Không có sản phẩm nào trong cơ sở dữ liệu.";
         }
+
     }
 }
