@@ -36,6 +36,11 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Order" asp-action="MyOrderItems">My Orders</a>
                                 </li>
+
+                                <!-- Nut lich su giao dich -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="ShoppingCart" asp-action="OrderHistory">Lịch sử đơn hàng</a>
+                                </li>
                             }
                             @if (User.IsInRole("Admin"))
                             {

@@ -1,0 +1,66 @@
+﻿@model List<PhamTaManhLan_8888.Models.Order>
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using PhamTaManhLan_8888.Models
+@using PhamTaManhLan_8888.Extensions
+@{
+    var culture = new System.Globalization.CultureInfo("vi-VN");
+    ViewData["Title"] = "Lịch sử đơn hàng";
+    var selectedStatus = ViewBag.SelectedStatus?.ToString();
+}
+
+<h2 class="mb-4">Lịch sử đơn hàng</h2>
+
+<form asp-action="OrderHistory" method="get" class="mb-4">
+    <div class="form-group">
+        <label for="status">Lọc theo trạng thái:</label>
+        <select name="status" class="form-control" onchange="this.form.submit()">
+            <option value="">Tất cả</option>
+            @foreach (var status in (List<SelectListItem>)ViewBag.Statuses)
+            {
+                <option value="@status.Value" selected="@(status.Value == selectedStatus)">
+                    @status.Text
+                </option>
+            }
+        </select>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Không tìm thấy đơn hàng nào phù hợp.</div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Ngày đặt</th>
+                <th>Sản phẩm</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <ul class="mb-0 ps-3">
+                            @foreach (var item in order.OrderDetails)
+                            {
+                                <li>@(item.Product?.Name ?? "Không xác định")</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>@order.TotalPrice.ToString("C0", culture)</td>
+                    <td>
+                        <span class="badge bg-secondary">
+                            @order.Status.GetDisplayName()
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
