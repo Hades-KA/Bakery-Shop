@@ -50,7 +50,8 @@
                         <td>@order.Id</td>
                         <td>@order.ApplicationUser.FullName (@order.ApplicationUser.Email)</td>
                         <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
-                        <td>@order.TotalPrice.ToString("C")</td>
+                        <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", order.TotalPrice)
+
                         <td>
                             <ul class="list-unstyled mb-0">
                             @foreach (var item in order.OrderDetails)
