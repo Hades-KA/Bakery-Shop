@@ -23,12 +23,12 @@
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
 <div class="table-responsive">
@@ -39,54 +39,64 @@
                 <th>Khách hàng</th>
                 <th>Ngày đặt</th>
                 <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
+                <th>Sản phẩm</th>
+                <th>Trạng thái & Hành động</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var order in Model)
             {
-                <tr>
-                    <td>@order.Id</td>
-                    <td>@order.ApplicationUser.FullName (@order.ApplicationUser.Email)</td>
-                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
-                    <td>@order.TotalPrice.ToString("C")</td>
-                    <td>
-                        <span class="badge @(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Pending ? "badge-warning" :
-                                             order.Status == PhamTaManhLan_8888.Models.OrderStatus.Processing ? "badge-primary" :
-                                             order.Status == PhamTaManhLan_8888.Models.OrderStatus.Shipped ? "badge-info" :
-                                             order.Status == PhamTaManhLan_8888.Models.OrderStatus.Delivered ? "badge-success" :
-                                             order.Status == PhamTaManhLan_8888.Models.OrderStatus.Cancelled ? "badge-danger" : "badge-secondary")">
-                            @GetStatusText(order.Status)
-                        </span>
-                    </td>
-                    <td>
-                        <a href="@Url.Action("Details", "Order", new { id = order.Id, area = "Admin" })" class="btn btn-info btn-sm">Chi tiết</a>
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.ApplicationUser.FullName (@order.ApplicationUser.Email)</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                        <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", order.TotalPrice)
 
-                        @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
-                        {
-                            <form asp-action="UpdateStatus" asp-controller="Order" asp-area="Admin" method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@order.Id" />
-                                <select name="status" class="form-select form-select-sm d-inline w-auto">
-                                    <option value="Pending" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Pending)">Chờ xử lý</option>
-                                    <option value="Processing" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Processing)">Đang xử lý</option>
-                                    <option value="Shipped" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Shipped)">Đã giao hàng</option>
-                                    <option value="Delivered" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Delivered)">Đã nhận hàng</option>
-                                    <option value="Cancelled" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Cancelled)">Hủy</option>
-                                </select>
-                                <button type="submit" class="btn btn-warning btn-sm">Cập nhật</button>
-                            </form>
-                        }
+                        <td>
+                            <ul class="list-unstyled mb-0">
+                            @foreach (var item in order.OrderDetails)
+                            {
+                                        <li>
+                                            <strong>@item.Product.Name</strong> x @item.Quantity<br />
+                                            <span class="text-muted small">@item.Price.ToString("C") mỗi cái</span>
+                                        </li>
+                            }
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column align-items-start">
+                                <span class="badge d-block mb-2 @(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Pending ? "bg-warning text-dark" :
+                                                 order.Status == PhamTaManhLan_8888.Models.OrderStatus.Processing ? "bg-primary" :
+                                                 order.Status == PhamTaManhLan_8888.Models.OrderStatus.Shipped ? "bg-info text-dark" :
+                                                 order.Status == PhamTaManhLan_8888.Models.OrderStatus.Delivered ? "bg-success" :
+                                                 order.Status == PhamTaManhLan_8888.Models.OrderStatus.Cancelled ? "bg-danger" : "bg-secondary")">
+                                @GetStatusText(order.Status)
+                                </span>
 
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <form asp-action="Delete" asp-controller="Order" asp-area="Admin" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
-                                <input type="hidden" name="id" value="@order.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
-                            </form>
-                        }
-                    </td>
-                </tr>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+                            {
+                                        <form asp-action="UpdateStatus" asp-controller="Order" asp-area="Admin" method="post" class="d-flex gap-2 align-items-center mb-2">
+                                            <input type="hidden" name="id" value="@order.Id" />
+                                            <select name="status" class="form-select form-select-sm w-auto">
+                                                <option value="Pending" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Pending)">Chờ xử lý</option>
+                                                <option value="Shipped" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Shipped)">Đã giao hàng</option>
+                                                <option value="Delivered" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Delivered)">Đã nhận hàng</option>
+                                                <option value="Cancelled" selected="@(order.Status == PhamTaManhLan_8888.Models.OrderStatus.Cancelled)">Hủy</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-warning btn-sm">Cập nhật</button>
+                                        </form>
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                        <form asp-action="Delete" asp-controller="Order" asp-area="Admin" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
+                                            <input type="hidden" name="id" value="@order.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                        </form>
+                            }
+                            </div>
+                        </td>
+                    </tr>
             }
         </tbody>
     </table>

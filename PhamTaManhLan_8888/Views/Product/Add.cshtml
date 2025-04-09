@@ -18,7 +18,7 @@
         </div>
 
         <!-- Giá sản phẩm -->
-        <div class="form-group mb-3">
+         <div class="form-group mb-3">
             <label asp-for="Price" class="form-label fw-bold"><i class="fas fa-dollar-sign"></i> Giá</label>
             <input asp-for="Price" class="form-control" placeholder="Nhập giá sản phẩm" />
             <span asp-validation-for="Price" class="text-danger"></span>
@@ -39,26 +39,21 @@
                 <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select mx-2" id="categorySelect">
                     <option value="">-- Chọn danh mục --</option>
                 </select>
-                <button type="button" class="btn btn-sm btn-success mx-1" id="btnAddCategory">
-                    <i class="fas fa-plus"></i> Thêm
-                </button>
-                <button type="button" class="btn btn-sm btn-danger" id="btnRemoveCategory">
-                    <i class="fas fa-trash"></i> Xóa
-                </button>
+
             </div>
         </div>
 
 
-        <!-- Ảnh sản phẩm -->
-        <div class="form-group mb-3">
-            <label asp-for="ImageUrl" class="form-label fw-bold"><i class="fas fa-image"></i> Ảnh sản phẩm</label>
-            <input type="file" asp-for="ImageUrl" class="form-control" id="imageUpload" onchange="previewImage(event)" />
+ <!-- Ảnh sản phẩm -->
+<div class="form-group mb-3">
+    <label asp-for="ImageUrl" class="form-label fw-bold"><i class="fas fa-image"></i> Ảnh sản phẩm</label>
+    <input type="file" asp-for="ImageUrl" class="form-control" id="imageUpload" onchange="previewImage(event)" />
 
-            <!-- Khung hiển thị ảnh preview -->
-            <div class="text-center mt-3">
-                <img id="imagePreview" class="img-thumbnail shadow-sm d-none" style="max-width: 200px; border-radius: 8px;">
-            </div>
-        </div>
+    <!-- Khung hiển thị ảnh preview -->
+    <div class="text-center mt-3">
+        <img id="imagePreview" class="img-thumbnail shadow-sm d-none" style="max-width: 200px; border-radius: 8px;">
+    </div>
+</div>
 
         <!-- Nút thêm -->
         <div class="text-center">
@@ -72,5 +67,24 @@
     </form>
 </div>
 @section Scripts {
-    <script src="~/js/site.js"></script>
+        <script>
+            // Function to preview the image
+            function previewImage(event) {
+                const input = event.target;
+                const preview = document.getElementById("imagePreview");
+
+                // Kiểm tra xem người dùng đã chọn ảnh chưa
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;  // Đặt nguồn ảnh cho preview
+                        preview.classList.remove("d-none");  // Hiển thị ảnh preview
+                    }
+                    reader.readAsDataURL(input.files[0]);  // Đọc file ảnh dưới dạng base64
+                } else {
+                    preview.src = "";
+                    preview.classList.add("d-none");  // Ẩn ảnh nếu không có file
+                }
+            }
+        </script>
 }

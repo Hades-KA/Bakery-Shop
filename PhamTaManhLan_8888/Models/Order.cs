@@ -11,7 +11,7 @@ namespace PhamTaManhLan_8888.Models
 		public DateTime OrderDate { get; set; }
 		public decimal TotalPrice { get; set; }
 		public string ShippingAddress { get; set; }
-		public string Notes { get; set; }
+		public string? Notes { get; set; }
 
 		[ForeignKey("UserId")]
 		[ValidateNever]
