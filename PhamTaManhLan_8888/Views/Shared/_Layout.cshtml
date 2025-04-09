@@ -67,6 +67,15 @@
                                         <li><a class="dropdown-item">Không có danh mục</a></li>
                                     }
                                 </ul>
+
+                                <!-- Hien lich su giao dich -->
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="ShoppingCart" asp-action="OrderHistory">Lịch sử giao dịch</a>
+                                </li>
+                                }
+
                             </li>
                         </ul>
 

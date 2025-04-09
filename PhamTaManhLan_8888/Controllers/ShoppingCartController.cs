@@ -206,6 +206,51 @@ public class ShoppingCartController : Controller
 		return RedirectToAction("Index");
 	}
 
+
+    // Xem lich su giao dich
+    [Authorize]
+    public async Task<IActionResult> OrderHistory()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return RedirectToAction("AccessDenied", "Home");
+
+        var orders = _context.Orders
+            .Where(o => o.UserId == user.Id)
+            .OrderByDescending(o => o.OrderDate)
+            .ToList();
+
+        return View(orders);
+    }
+
+	// Xem chi tiet lich su giao dich
+    [Authorize]
+    public async Task<IActionResult> OrderDetails(int id)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return RedirectToAction("AccessDenied", "Home");
+
+        var order = _context.Orders
+            .Where(o => o.Id == id && o.UserId == user.Id)
+            .Select(o => new
+            {
+                o.Id,
+                o.OrderDate,
+                o.TotalPrice,
+                OrderDetails = o.OrderDetails.Select(od => new
+                {
+                    od.ProductId,
+                    od.Price,
+                    od.Quantity,
+                    ProductName = od.Product.Name
+                }).ToList()
+            })
+            .FirstOrDefault();
+
+        if (order == null) return NotFound();
+
+        return View(order);
+    }
+
 	// Action method xử lý AJAX request cập nhật số lượng sản phẩm trong giỏ hàng
 	[HttpPost]
 	public IActionResult UpdateCartItemAjax(int productId, int quantity)
@@ -248,5 +293,6 @@ public class ShoppingCartController : Controller
 			cartCount = cartCount
 		});
 	}
+
 
 }

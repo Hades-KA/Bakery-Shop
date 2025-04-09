@@ -1,0 +1,35 @@
+﻿@model List<PhamTaManhLan_8888.Models.Order>
+
+<h2 class="mb-4">Lịch sử giao dịch</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info text-center">Bạn chưa có giao dịch nào.</div>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Chi tiết</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@order.TotalPrice.ToString("N0") VND</td>
+                    <td>
+                        <!-- Bạn có thể tạo thêm View chi tiết đơn hàng nếu muốn -->
+                        <a class="btn btn-sm btn-info" asp-action="OrderDetails" asp-route-id="@order.Id">Chi tiết</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
